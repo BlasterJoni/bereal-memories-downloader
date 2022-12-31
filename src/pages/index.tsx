@@ -128,18 +128,28 @@ const Home: NextPage = () => {
             </div>
           )} */}
           {memoriesQuery.data && (
-            <div style={{ display: "flex", width: "100vw", flexWrap: "wrap" }}>
-              {memoriesQuery.data.data.map((memory: any) => {
-                return (
-                  <div
-                    style={{ width: "100px", padding: "10px" }}
-                    key={memory.id}
-                  >
-                    <img src={memory.thumbnail.url} style={{ width: "100%" }} />
-                  </div>
-                );
-              })}
-            </div>
+            <>
+              <a className="btn" target="_blank" href={"/api/download/all?token="+token} rel="noreferrer">
+                Download ALL
+              </a>
+              <div
+                style={{ display: "flex", width: "100vw", flexWrap: "wrap" }}
+              >
+                {memoriesQuery.data.data.map((memory: any) => {
+                  return (
+                    <div
+                      style={{ width: "100px", padding: "10px" }}
+                      key={memory.id}
+                    >
+                      <img
+                        src={memory.thumbnail.url}
+                        style={{ width: "100%" }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
       </main>
