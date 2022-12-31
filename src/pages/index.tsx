@@ -47,6 +47,33 @@ const Home: NextPage = () => {
     }
   }, [token, refreshTokenMut]);
 
+  const downloadAll = async () =>{
+    let download = memoriesQuery.data.data.map( async (memory:any)=>{
+       return [
+         { name: memory.memoryDay + "/primary.webp", lastModified: new Date(memory.memoryDay), input: await fetch("/api/photos?path="+memory.primary.url.split("/Photos/")[1]) },
+         { name: memory.memoryDay + "/secondary.webp", lastModified: new Date(memory.memoryDay), input: await fetch("/api/photos?path="+memory.secondary.url.split("/Photos/")[1]) }
+       ]
+     })
+
+    download = await Promise.all(download);
+    download = download.flat();
+
+    try {
+      const { downloadZip } = await import('client-zip')
+
+      const blob = await downloadZip(download).blob();
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "memories.zip";
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error(error)
+    }
+    
+  }
+
   return (
     <>
       <Head>
@@ -129,9 +156,14 @@ const Home: NextPage = () => {
           )} */}
           {memoriesQuery.data && (
             <>
-              <a className="btn" target="_blank" href={"/api/download/all?token="+token} rel="noreferrer">
+              <button
+                className="btn"
+                onClick={() => {
+                  downloadAll();
+                }}
+              >
                 Download ALL
-              </a>
+              </button>
               <div
                 style={{ display: "flex", width: "100vw", flexWrap: "wrap" }}
               >
